@@ -15,6 +15,7 @@ import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.internal.EncryptionConfig
+import io.agora.rtc.models.DataStreamConfig
 import io.agora.rtc.video.VideoCanvas
 import io.agora.rtc.video.VideoEncoderConfiguration
 import io.agora.rtc.video.VideoEncoderConfiguration.FRAME_RATE
@@ -34,6 +35,7 @@ open class ChannelManager(
     }
 
     private var channel: String? = null
+    private var streamId: Int = 0
     private val rtcEventListener = RtcEventListener()
 
     private val rtcEngine = RtcEngine.create(context, BuildConfig.AGORA_APP_ID, rtcEventListener)
@@ -113,6 +115,7 @@ open class ChannelManager(
         updateCallState(ChannelState.Connecting(this.channel!!))
         val accessToken = BuildConfig.AGORA_ACCESS_TOKEN
         rtcEngine.joinChannel(accessToken, channel, "OpenVCall", uid)
+        streamId = rtcEngine.createDataStream(DataStreamConfig())
     }
 
     fun leaveChannel() {
@@ -121,8 +124,8 @@ open class ChannelManager(
     }
 
     fun sendMessage(message: String) {
-        rtcEngine.sendStreamMessage(STREAM_ID, message.toByteArray())
-        updateMessage(participantManager.getLocalUser()?.uid ?: return, message)
+        rtcEngine.sendStreamMessage(streamId, message.toByteArray())
+        updateMessage("You", message)
     }
 
     private fun updateParticipantState() {
@@ -171,7 +174,7 @@ open class ChannelManager(
         updateParticipantState()
     }
 
-    private fun updateMessage(uid: Int, message: String) {
+    private fun updateMessage(uid: String?, message: String) {
         mutableMessages.add(Message(uid, message))
         _messages.postValue(mutableMessages.toList())
     }
@@ -238,11 +241,17 @@ open class ChannelManager(
             updateCallState(ChannelState.ConnectionFailed("Error: $err"))
         }
 
+        override fun onConnectionLost() {
+            super.onConnectionLost()
+            Log.d(TAG, "onConnectionLost: ")
+            updateCallState(ChannelState.Disconnected)
+        }
+
         override fun onStreamMessage(uid: Int, streamId: Int, data: ByteArray?) {
             super.onStreamMessage(uid, streamId, data)
-            Log.d(TAG, "onStreamMessage: ")
-            val message = String(data ?: return)
-            updateMessage(uid, message)
+            data ?: return
+            Log.d(TAG, "onStreamMessage: ${String(data)}")
+            updateMessage(uid = uid.toString(), String(data))
         }
 
         override fun onStreamMessageError(
@@ -253,13 +262,7 @@ open class ChannelManager(
             cached: Int
         ) {
             super.onStreamMessageError(uid, streamId, error, missed, cached)
-            Log.d(TAG, "onStreamMessageError: ")
-        }
-
-        override fun onConnectionLost() {
-            super.onConnectionLost()
-            Log.d(TAG, "onConnectionLost: ")
-            updateCallState(ChannelState.Disconnected)
+            Log.d(TAG, "onStreamMessageError: $streamId $error")
         }
 
         override fun onJoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
@@ -271,4 +274,5 @@ open class ChannelManager(
         }
 
     }
+
 }

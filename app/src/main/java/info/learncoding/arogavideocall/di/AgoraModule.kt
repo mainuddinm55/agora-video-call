@@ -21,7 +21,6 @@ object AgoraModule {
     }
 
     @Provides
-    @Singleton
     fun provideChannelManager(
         @ApplicationContext context: Context,
         participantManager: ParticipantManager
