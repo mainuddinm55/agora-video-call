@@ -15,7 +15,6 @@ import javax.inject.Singleton
 object AgoraModule {
 
     @Provides
-    @Singleton
     fun provideParticipantManager(): ParticipantManager {
         return ParticipantManager()
     }

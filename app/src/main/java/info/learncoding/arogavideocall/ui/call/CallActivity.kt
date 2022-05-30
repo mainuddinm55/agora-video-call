@@ -81,7 +81,6 @@ class CallActivity : AppCompatActivity() {
                     or WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                     or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                     or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-//                    or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
     }
 
@@ -139,6 +138,7 @@ class CallActivity : AppCompatActivity() {
         if (primaryParticipant.videoInfo != null) {
             Log.d(TAG, "renderPrimaryView: has video info")
             val target = primaryParticipant.view
+            target?.setZOrderOnTop(false)
             if (target != null) {
                 stripView(target)
                 binding.primaryView.addView(target)
