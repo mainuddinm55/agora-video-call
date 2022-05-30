@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.SurfaceView
+import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.core.view.children
@@ -40,6 +41,8 @@ class CallActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_call)
 
+        setKeepScreenFlag()
+
         initClickEvent()
         initRecyclerView()
         observeChannelState()
@@ -68,6 +71,18 @@ class CallActivity : AppCompatActivity() {
             viewModel.sendMessage(binding.msgEditText.text.toString())
             binding.msgEditText.text = null
         }
+    }
+
+    private fun setKeepScreenFlag() {
+        // So calls can be answered when screen is locked
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                    or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    or WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                    or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
     }
 
     private fun observeMessageEditText() {
