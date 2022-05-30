@@ -34,6 +34,7 @@
             android:name=".ui.call.CallActivity"
             android:exported="false"
             android:showOnLockScreen="true"
+            android:windowSoftInputMode="adjustPan|stateVisible"
             android:showWhenLocked="true"
             android:turnScreenOn="true" />
     </application>

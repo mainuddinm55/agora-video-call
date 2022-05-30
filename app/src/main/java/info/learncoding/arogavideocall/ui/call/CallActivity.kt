@@ -81,6 +81,8 @@ class CallActivity : AppCompatActivity() {
                     or WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                     or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                     or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                    or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+                    or WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
         )
     }
 
