@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ArogaVideoCall</string>
+    <string name="channel_name">Channel name</string>
+    <string name="join">Join</string>
+    <string name="type_here">Type here</string>
+
+    <string-array name="encryption_mode_values">
+        <item>AES-128-XTS</item>
+        <item>AES-256-XTS</item>
+    </string-array>
+</resources>
